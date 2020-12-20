@@ -10,7 +10,9 @@ If you know what you are doing then you can use the links below to install the s
 
 ## Installation Instructions
 
-If you're new to user scripts then it's a fairly painless process to get up and running:
+If you're new to user scripts then I've put together a 5 minute video tutorial and demo of the scripts in action: https://youtu.be/F1tSTKREN6c
+
+Alternatively you can follow these steps to get up and running:
 
 1. [Install a browser extension such as GreaseMonkey or TamperMonkey](https://simply-how.com/enhance-and-fine-tune-any-web-page-the-complete-user-scripts-guide#section-2)
 2. Click on the links below to install whichever script you want:
