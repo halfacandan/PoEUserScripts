@@ -1,22 +1,21 @@
 // ==UserScript==
 // @name         PoE All Ears Wiki Tracker
 // @namespace    https://github.com/halfacandan/PoEUserScripts
-// @version      1.0
+// @version      1.1
 // @description  Track which objectives for the "All Ears" achievement have been completed on the PoE Wiki
 // @author       halfacandan
 // @match        https://pathofexile.gamepedia.com/All_Ears*
 // @require      https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js
-// @grant        GM_setValue
-// @grant        GM_getValue
+// @grant        GM.setValue
+// @grant        GM.getValue
 // ==/UserScript==
 
-(function() {
+(async () => {
     'use strict';
 
-    var colourBlindMode = GM_getValue('colourBlindMode', true);
-
     function updateAchievementCount(action,id){
-        if(action == "add"){
+
+      	if(action == "add"){
             completedAchievements.push(id);
         } else {
             removeArrayValue(completedAchievements,id);
@@ -26,29 +25,31 @@
     }
 
     function onlyUnique(value, index, self) {
-        return self.indexOf(value) === index;
+
+      	return self.indexOf(value) === index;
     }
 
     function redrawAchievementCount(){
-        console.log(completedAchievements.sort((a, b) => a*1 - b*1));
-        console.log(achievementIds.sort((a, b) => a - b));
+
         let completedAchievementCount = completedAchievements.filter(onlyUnique).length;
         let achievementCount = achievementIds.filter(onlyUnique).length;
-        console.log(achievementCount);
+
         $("#achievementCounter p:eq(0)").text(`${completedAchievementCount} of ${achievementCount} (${Math.round(completedAchievementCount/achievementCount*100)}%)`);
     }
 
-    function switchColourBlindMode(colourBlindModeEnabled){
+    async function switchColourBlindMode(colourBlindModeEnabled){
+
         if(colourBlindModeEnabled){
             $(".colourBlindModeOff").addClass("colourBlindMode").removeClass("colourBlindModeOff");
         } else {
             $(".colourBlindMode").addClass("colourBlindModeOff").removeClass("colourBlindMode");
         }
 
-         GM_setValue('colourBlindMode', colourBlindModeEnabled);
+         await GM.setValue('colourBlindMode', colourBlindModeEnabled);
     }
 
     function removeArrayValue(array,value){
+
         var index = array.indexOf(value);
         if (index > -1) {
             array.splice(index, 1);
@@ -57,21 +58,26 @@
         return false;
     }
 
-    function getAchievements(){
-        var achievementsString = GM_getValue('poe_achievements', "");
+    async function getAchievements(){
+
+        var achievementsString = await GM.getValue('poe_achievements', "");
         if(achievementsString.indexOf(",") > 0){
             return achievementsString.split(",");
         } else {
             return achievementsString == "" ? [] : [achievements.filter(onlyUnique)];
         }
     }
-    function setAchievements(completedAchievements){
-        GM_setValue('poe_achievements', completedAchievements.filter(onlyUnique).join(","));
+
+    async function setAchievements(completedAchievements){
+
+        await GM.setValue('poe_achievements', completedAchievements.filter(onlyUnique).join(","));
     }
 
-    let completedAchievements = getAchievements();
+  	var colourBlindMode = await GM.getValue('colourBlindMode', true);
+    let completedAchievements = await getAchievements();
     var achievements = $("table.wikitable:not(table.responsive-table) tr:not(:nth-child(1)) td:nth-child(1)");
     var achievementIds = [];
+
     // Filter out rowspan issues
     achievements = achievements.filter(function() {
         return $(this).text() * 1 > 0;
@@ -150,20 +156,22 @@
         var completedAchievementDOM = achievements.filter(function() {
             return completedAchievements.indexOf($(this).attr("data-num")) >= 0;
         });
+
         completedAchievementDOM.addClass("completed");
 
-        $(document).on("click","table.wikitable tr td.achievementId",function(){
+        $(document).on("click","table.wikitable tr td.achievementId", async function(){
             if($(this).hasClass("completed")){
                 $(this).removeClass("completed");
-                updateAchievementCount("remove",$(this).attr("data-num"));
+                await updateAchievementCount("remove",$(this).attr("data-num"));
             } else {
                 $(this).addClass("completed");
-                updateAchievementCount("add",$(this).attr("data-num"));
+                await updateAchievementCount("add",$(this).attr("data-num"));
             }
         });
 
-        $("#colourBlindMode,#colourBlindModeLabel").click(function(){
-            switchColourBlindMode($("#colourBlindMode").is(":checked"));
+        $("#colourBlindMode,#colourBlindModeLabel").click(async function(){
+
+            await switchColourBlindMode($("#colourBlindMode").is(":checked"));
         });
     });
 })();

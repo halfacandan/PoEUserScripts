@@ -1,65 +1,79 @@
 // ==UserScript==
 // @name         PoE No Stone Unturned Wiki Tracker
 // @namespace    https://github.com/halfacandan/PoEUserScripts
-// @version      1.0
+// @version      1.1
 // @description  Track which objectives for the "No Stone Unturned" achievement have been completed on the PoE Wiki
 // @author       halfacandan
 // @match        https://pathofexile.gamepedia.com/No_Stone_Unturned*
 // @require      https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js
-// @grant        GM_setValue
-// @grant        GM_getValue
+// @grant        GM.setValue
+// @grant        GM.getValue
 // ==/UserScript==
 
-(function() {
+(async () => {
     'use strict';
 
-    var colourBlindMode = GM_getValue('colourBlindMode', true);
+    async function updateLoreCount(action,id){
 
-    function updateLoreCount(action,id){
-        if(action == "add"){
+      	if(action == "add"){
             completedLores.push(id);
         } else {
             removeArrayValue(completedLores,id);
         }
-        redrawLoreCount();
-        setLores(completedLores);
-    }
-    function redrawLoreCount(){
-        $("#loreCounter p:eq(0)").text(`${completedLores.length} of ${lores.length} (${Math.round(completedLores.length/lores.length*100)}%)`);
+
+      	redrawLoreCount();
+
+        await setLores(completedLores);
     }
 
-    function switchColourBlindMode(colourBlindModeEnabled){
-        if(colourBlindModeEnabled){
+    function redrawLoreCount(){
+
+      	let completedLoresLength = (typeof completedLores.length === "undefined" ? 0 : completedLores.length);
+
+        $("#loreCounter p:eq(0)").text(`${completedLoresLength} of ${lores.length} (${Math.round(completedLoresLength/lores.length*100)}%)`);
+    }
+
+    async function switchColourBlindMode(colourBlindModeEnabled){
+
+      	if(colourBlindModeEnabled){
             $(".colourBlindModeOff").addClass("colourBlindMode").removeClass("colourBlindModeOff");
         } else {
             $(".colourBlindMode").addClass("colourBlindModeOff").removeClass("colourBlindMode");
         }
 
-         GM_setValue('colourBlindMode', colourBlindModeEnabled);
+        await GM.setValue('colourBlindMode', colourBlindModeEnabled);
     }
 
     function removeArrayValue(array,value){
-        var index = array.indexOf(value);
-        if (index > -1) {
+
+      	var index = array.indexOf(value);
+
+      	if (index > -1) {
             array.splice(index, 1);
             return true;
         }
+
         return false;
     }
 
-    function getLores(){
-        var loresString = GM_getValue('poe_lores', "");
-        if(loresString.indexOf(",") > 0){
+    async function getLores(){
+
+        var loresString = await GM.getValue('poe_lores', "");
+
+      	if(loresString.indexOf(",") > 0){
             return loresString.split(",");
         } else {
             return loresString == "" ? [] : [loresString];
         }
     }
-    function setLores(completedLores){
-        GM_setValue('poe_lores', completedLores.join(","));
+
+    async function setLores(completedLores){
+
+        await GM.setValue('poe_lores', completedLores.join(","));
     }
 
-    let completedLores = getLores();
+		var colourBlindMode = await GM.getValue('colourBlindMode', true);
+    var completedLores = await getLores();
     var lores = $("table.wikitable:not(table.wikitable:eq(0),table.responsive-table) tbody tr td:nth-child(1)");
 
     $(document).ready(function(){
@@ -87,18 +101,18 @@
         });
         completedLoreDOM.addClass("completed");
 
-        $(document).on("click","table.wikitable tr td.loreId",function(){
+				$(document).on("click","table.wikitable tr td.loreId",async function (){
             if($(this).hasClass("completed")){
                 $(this).removeClass("completed");
-                updateLoreCount("remove",$(this).attr("data-num"));
+                await updateLoreCount("remove",$(this).attr("data-num"));
             } else {
                 $(this).addClass("completed");
-                updateLoreCount("add",$(this).attr("data-num"));
+                await updateLoreCount("add",$(this).attr("data-num"));
             }
         });
 
-        $("#colourBlindMode,#colourBlindModeLabel").click(function(){
-            switchColourBlindMode($("#colourBlindMode").is(":checked"));
+        $("#colourBlindMode,#colourBlindModeLabel").click(async function (){
+            await switchColourBlindMode($("#colourBlindMode").is(":checked"));
         });
-    });
+  	});
 })();
