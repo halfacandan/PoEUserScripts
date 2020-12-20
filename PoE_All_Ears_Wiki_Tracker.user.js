@@ -12,6 +12,9 @@
 
 (function() {
     'use strict';
+
+    var colourBlindMode = GM_getValue('colourBlindMode', true);
+
     function updateAchievementCount(action,id){
         if(action == "add"){
             completedAchievements.push(id);
@@ -33,6 +36,16 @@
         let achievementCount = achievementIds.filter(onlyUnique).length;
         console.log(achievementCount);
         $("#achievementCounter p:eq(0)").text(`${completedAchievementCount} of ${achievementCount} (${Math.round(completedAchievementCount/achievementCount*100)}%)`);
+    }
+
+    function switchColourBlindMode(colourBlindModeEnabled){
+        if(colourBlindModeEnabled){
+            $(".colourBlindModeOff").addClass("colourBlindMode").removeClass("colourBlindModeOff");
+        } else {
+            $(".colourBlindMode").addClass("colourBlindModeOff").removeClass("colourBlindMode");
+        }
+
+         GM_setValue('colourBlindMode', colourBlindModeEnabled);
     }
 
     function removeArrayValue(array,value){
@@ -67,9 +80,19 @@
     var achievementDetail = $("table.wikitable tr:not(:nth-child(1))");
 
     $(document).ready(function(){
-        $("<style type='text/css'>.achievementId{cursor:pointer; color:red;} .completed{ color:green !important; font-weight:bold;} .brokenOrder:after{ content: '*';} .doNot:after{ content: '▼';} .brokenOrder.doNot:after{ content: '*▼';}#achievementCounter{ position:fixed;left:0;top:0;height:120px;width:160px;padding:10px;background-color:#fff;z-index:9999;text-align: center;} .guideInfo{ font-size: 80%; text-aligh: left;}</style>").appendTo("head");
+        $(`<style type='text/css'>
+              .achievementId{ cursor:pointer; color:red; }
+              .completed{ color:green !important; font-weight:bold; }
+              .completed.colourBlindMode:before{ content: '✅'; }
+              .brokenOrder:after{ content: '*'; }
+              .doNot:after{ content: '▶'; }
+              .brokenOrder.doNot:after{ content: '*▶'; }
+              #achievementCounter{ position:fixed; left:0; top:0; height:150px; width:180px; padding:10px; background-color:#fff; z-index:9999; text-align: center; }
+              .guideInfo{ font-size: 80%; text-aligh: left;}
+              #colourBlindModeLabel{ font-size: 70%; }
+          </style>`).appendTo("head");
 
-        $('<div id="achievementCounter"><p></p><p class="guideInfo">Tasks marked with * occur out of sequence</p><p class="guideInfo">Tasks marked with ▼ can only be completed at certain points</p></div>').appendTo("body");
+        $(`<div id="achievementCounter"><p></p><p class="guideInfo">Tasks marked with * occur out of sequence</p><p class="guideInfo">Tasks marked with ▶ can only be completed at certain points</p><input id="colourBlindMode" type="checkbox"${(colourBlindMode ? " checked" : "")}/><label id="colourBlindModeLabel" for="colourBlindMode">Enable Colour Blind Mode</label></div>`).appendTo("body");
 
         // Find the "DO NOT" tasks
         var achievementDoNot = [];
@@ -110,6 +133,7 @@
             if(achievementIds.indexOf(id) < 0) { achievementIds.push(id); }
 
             $(this).attr("data-num",id).addClass("achievementId");
+            $(this).addClass("colourBlindMode" + (colourBlindMode ? "" : "Off"));
             if(achievementDoNot[index]){
                 $(this).addClass("doNot");
             }
@@ -136,6 +160,10 @@
                 $(this).addClass("completed");
                 updateAchievementCount("add",$(this).attr("data-num"));
             }
+        });
+
+        $("#colourBlindMode,#colourBlindModeLabel").click(function(){
+            switchColourBlindMode($("#colourBlindMode").is(":checked"));
         });
     });
 })();

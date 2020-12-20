@@ -12,6 +12,9 @@
 
 (function() {
     'use strict';
+
+    var colourBlindMode = GM_getValue('colourBlindMode', true);
+
     function updateLoreCount(action,id){
         if(action == "add"){
             completedLores.push(id);
@@ -23,6 +26,16 @@
     }
     function redrawLoreCount(){
         $("#loreCounter p:eq(0)").text(`${completedLores.length} of ${lores.length} (${Math.round(completedLores.length/lores.length*100)}%)`);
+    }
+
+    function switchColourBlindMode(colourBlindModeEnabled){
+        if(colourBlindModeEnabled){
+            $(".colourBlindModeOff").addClass("colourBlindMode").removeClass("colourBlindModeOff");
+        } else {
+            $(".colourBlindMode").addClass("colourBlindModeOff").removeClass("colourBlindMode");
+        }
+
+         GM_setValue('colourBlindMode', colourBlindModeEnabled);
     }
 
     function removeArrayValue(array,value){
@@ -51,14 +64,22 @@
 
     $(document).ready(function(){
 
-        $("<style type='text/css'>.loreId{cursor:pointer; color:red;} .completed{ color:green !important; font-weight:bold;} #loreCounter{ position:fixed;left:0;top:0;height:40px;width:160px;padding:10px;background-color:#fff;z-index:9999;text-align: center;} </style>").appendTo("head");
+        $(`<style type='text/css'>
+            .loreId{cursor:pointer; color:red; }
+            .completed{ color:green !important; font-weight:bold;}
+            .completed.colourBlindMode:before{ content: '✅'; }
+            #loreCounter{ position:fixed; left:0; top:0; height:70px; width:180px; padding:10px; background-color:#fff; z-index:9999; text-align: center; }
+            #loreCounter p{ margin-bottom: 13px; }
+            #colourBlindModeLabel{ font-size: 70%; }
+        </style>`).appendTo("head");
 
-        $('<div id="loreCounter"><p></p></div>').appendTo("body");
+        $(`<div id="loreCounter"><p></p><input id="colourBlindMode" type="checkbox"${(colourBlindMode ? " checked" : "")}/><label id="colourBlindModeLabel" for="colourBlindMode">Enable Colour Blind Mode</label></div>`).appendTo("body");
         redrawLoreCount();
 
         lores.each(function(){
             var id = $(this).text();
             $(this).attr("data-num",id).addClass("loreId");
+            $(this).addClass("colourBlindMode" + (colourBlindMode ? "" : "Off"));
         });
 
         var completedLoreDOM = lores.filter(function() {
@@ -74,6 +95,10 @@
                 $(this).addClass("completed");
                 updateLoreCount("add",$(this).attr("data-num"));
             }
+        });
+
+        $("#colourBlindMode,#colourBlindModeLabel").click(function(){
+            switchColourBlindMode($("#colourBlindMode").is(":checked"));
         });
     });
 })();
