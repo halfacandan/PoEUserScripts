@@ -1,10 +1,11 @@
 // ==UserScript==
 // @name         PoE All Ears Wiki Tracker
 // @namespace    https://github.com/halfacandan/PoEUserScripts
-// @version      1.1
+// @version      1.2
 // @description  Track which objectives for the "All Ears" achievement have been completed on the PoE Wiki
 // @author       halfacandan
 // @match        https://pathofexile.gamepedia.com/All_Ears*
+// @match        https://pathofexile.fandom.com/wiki/All_Ears*
 // @require      https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js
 // @grant        GM.setValue
 // @grant        GM.getValue

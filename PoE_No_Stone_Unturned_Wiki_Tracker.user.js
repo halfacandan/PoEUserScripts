@@ -1,10 +1,11 @@
 // ==UserScript==
 // @name         PoE No Stone Unturned Wiki Tracker
 // @namespace    https://github.com/halfacandan/PoEUserScripts
-// @version      1.1
+// @version      1.2
 // @description  Track which objectives for the "No Stone Unturned" achievement have been completed on the PoE Wiki
 // @author       halfacandan
 // @match        https://pathofexile.gamepedia.com/No_Stone_Unturned*
+// @match        https://pathofexile.fandom.com/wiki/No_Stone_Unturned*
 // @require      https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js
 // @grant        GM.setValue
 // @grant        GM.getValue
