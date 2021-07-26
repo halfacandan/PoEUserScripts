@@ -1,12 +1,13 @@
 // ==UserScript==
 // @name         PoE All Ears Wiki Tracker
 // @namespace    https://github.com/halfacandan/PoEUserScripts
-// @version      1.2
+// @version      1.3
 // @description  Track which objectives for the "All Ears" achievement have been completed on the PoE Wiki
 // @author       halfacandan
 // @match        https://pathofexile.gamepedia.com/All_Ears*
 // @match        https://pathofexile.fandom.com/wiki/All_Ears*
-// @require      https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js
+// @require      https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js
+// @require      https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js
 // @grant        GM.setValue
 // @grant        GM.getValue
 // ==/UserScript==
@@ -14,15 +15,26 @@
 (async () => {
     'use strict';
 
-    function updateAchievementCount(action,id){
-
-      	if(action == "add"){
+    async function updateAchievementCount(action,id){
+        
+      	switch(action) {
+          case "add":
             completedAchievements.push(id);
-        } else {
+            break;
+          case "reset":
+            // Reset the tracking array
+            completedAchievements = [];
+            // Remove the green ticks
+            $(".achievementId.completed").removeClass("completed");
+            break;
+          default:
+            // "remove"
             removeArrayValue(completedAchievements,id);
         }
-        redrawAchievementCount();
-        setAchievements(completedAchievements);
+      
+      	redrawAchievementCount();
+      
+        await setAchievements(completedAchievements);
     }
 
     function onlyUnique(value, index, self) {
@@ -78,6 +90,8 @@
     let completedAchievements = await getAchievements();
     var achievements = $("table.wikitable:not(table.responsive-table) tr:not(:nth-child(1)) td:nth-child(1)");
     var achievementIds = [];
+  
+  	var jQueryUiStylesheetUri = "https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css";
 
     // Filter out rowspan issues
     achievements = achievements.filter(function() {
@@ -88,18 +102,30 @@
 
     $(document).ready(function(){
         $(`<style type='text/css'>
-              .achievementId{ cursor:pointer; color:red; }
-              .completed{ color:green !important; font-weight:bold; }
-              .completed.colourBlindMode:before{ content: '✅'; }
-              .brokenOrder:after{ content: '*'; }
-              .doNot:after{ content: '▶'; }
-              .brokenOrder.doNot:after{ content: '*▶'; }
-              #achievementCounter{ position:fixed; left:0; top:0; height:150px; width:180px; padding:10px; background-color:#fff; z-index:9999; text-align: center; }
-              .guideInfo{ font-size: 80%; text-aligh: left;}
-              #colourBlindModeLabel{ font-size: 70%; }
+            .achievementId{ cursor:pointer; color:red; }
+            .completed{ color:green !important; font-weight:bold; }
+            .completed.colourBlindMode:before{ content: '✅'; }
+            .brokenOrder:after{ content: '*'; }
+            .doNot:after{ content: '▶'; }
+            .brokenOrder.doNot:after{ content: '*▶'; }
+            #achievementCounter{ position:fixed; left:66px; top:0; height:220px; width:220px; padding:10px; background-color:#fff; z-index:9999; text-align: center; }
+            .guideInfo{ font-size: 80%; text-aligh: left;}
+            #colourBlindModeLabel{ font-size: 70%; }
+            #resetButton { font-size: 70%; margin-top: 13px; }
           </style>`).appendTo("head");
+      
+      	$(`<link rel="stylesheet" href="${jQueryUiStylesheetUri}">`).appendTo("head");
 
-        $(`<div id="achievementCounter"><p></p><p class="guideInfo">Tasks marked with * occur out of sequence</p><p class="guideInfo">Tasks marked with ▶ can only be completed at certain points</p><input id="colourBlindMode" type="checkbox"${(colourBlindMode ? " checked" : "")}/><label id="colourBlindModeLabel" for="colourBlindMode">Enable Colour Blind Mode</label></div>`).appendTo("body");
+        $(`<div id="achievementCounter">
+                <p></p>
+                <p class="guideInfo">Tasks marked with * occur out of sequence</p>
+                <p class="guideInfo">Tasks marked with ▶ can only be completed at certain points</p>
+                <input id="colourBlindMode" type="checkbox"${(colourBlindMode ? " checked" : "")}/><label id="colourBlindModeLabel" for="colourBlindMode">Enable Colour Blind Mode</label>
+                <button id="resetButton" class="ui-button ui-widget ui-corner-all" title="Reset your progress">
+                    <span class="ui-icon ui-icon ui-icon-alert"></span>
+                    Reset Your Progress
+                </button>
+            </div>`).appendTo("body");
 
         // Find the "DO NOT" tasks
         var achievementDoNot = [];
@@ -170,8 +196,37 @@
             }
         });
 
-        $("#colourBlindMode,#colourBlindModeLabel").click(async function(){
+      	$(document).on("click","#resetButton", async function (){
+            $("<div>Would you like to reset your progress back to zero?</div>").dialog({
+              modal: true,
+              title: 'Reset Your Progress',
+              zIndex: 10000,
+              autoOpen: true,
+              width: 'auto',
+              resizable: false,
+              buttons: [
+                {
+                  text: "Yes",
+                  click: async function() {
+                    await updateAchievementCount("reset", null);
+                    $(this).dialog("close");
+                  }
+                },
+                {
+                  text: "Cancel",
+                  click: async function() {
+                    $(this).dialog("close");
+                  }
+                }
+              ],
+              close: async function(event, ui) {
+                $(this).remove();
+                console.log("close");
+              }
+            });
+        });
 
+        $("#colourBlindMode,#colourBlindModeLabel").click(async function(){
             await switchColourBlindMode($("#colourBlindMode").is(":checked"));
         });
     });
