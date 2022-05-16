@@ -6,6 +6,7 @@
 // @author       halfacandan
 // @match        https://pathofexile.gamepedia.com/All_Ears*
 // @match        https://pathofexile.fandom.com/wiki/All_Ears*
+// @match        https://www.poewiki.net/wiki/All_Ears*
 // @require      https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js
 // @require      https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js
 // @grant        GM.setValue
@@ -16,7 +17,7 @@
     'use strict';
 
     async function updateAchievementCount(action,id){
-        
+
       	switch(action) {
           case "add":
             completedAchievements.push(id);
@@ -31,9 +32,9 @@
             // "remove"
             removeArrayValue(completedAchievements,id);
         }
-      
+
       	redrawAchievementCount();
-      
+
         await setAchievements(completedAchievements);
     }
 
@@ -90,7 +91,7 @@
     let completedAchievements = await getAchievements();
     var achievements = $("table.wikitable:not(table.responsive-table) tr:not(:nth-child(1)) td:nth-child(1)");
     var achievementIds = [];
-  
+
   	var jQueryUiStylesheetUri = "https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css";
 
     // Filter out rowspan issues
@@ -113,7 +114,7 @@
             #colourBlindModeLabel{ font-size: 70%; }
             #resetButton { font-size: 70%; margin-top: 13px; }
           </style>`).appendTo("head");
-      
+
       	$(`<link rel="stylesheet" href="${jQueryUiStylesheetUri}">`).appendTo("head");
 
         $(`<div id="achievementCounter">

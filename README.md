@@ -5,8 +5,8 @@ This project hosts a few user scripts which can enhance Path of Exile's communit
 User scripts are small pieces of JavaScript code which run in a browser extension and manipulate whichever webpages they target.
 
 If you know what you are doing then you can use the links below to install the scripts...if not, read on:
-* [PoE All Ears Wiki Tracker](https://github.com/halfacandan/PoEUserScripts/raw/main/PoE_All_Ears_Wiki_Tracker.user.js) - Let's you track which objectives for the "All Ears" achievement have been completed on the [PoE Wiki "All Ears" page](https://pathofexile.fandom.com/wiki/All_Ears)
-* [PoE No Stone Unturned Wiki Tracker](https://github.com/halfacandan/PoEUserScripts/raw/main/PoE_No_Stone_Unturned_Wiki_Tracker.user.js) - Let's you track which objectives for the "No Stone Unturned" achievement have been completed on the [PoE Wiki "No Stone Unturned" page](https://pathofexile.fandom.com/wiki/No_Stone_Unturned)
+* [PoE All Ears Wiki Tracker](https://github.com/halfacandan/PoEUserScripts/raw/main/PoE_All_Ears_Wiki_Tracker.user.js) - Let's you track which objectives for the "All Ears" achievement have been completed on the [PoE Wiki "All Ears" page](https://www.poewiki.net/wiki/All_Ears)
+* [PoE No Stone Unturned Wiki Tracker](https://github.com/halfacandan/PoEUserScripts/raw/main/PoE_No_Stone_Unturned_Wiki_Tracker.user.js) - Let's you track which objectives for the "No Stone Unturned" achievement have been completed on the [PoE Wiki "No Stone Unturned" page](https://www.poewiki.net/wiki/No_Stone_Unturned)
 
 ## Installation Instructions
 
@@ -19,8 +19,8 @@ Alternatively you can follow these steps to get up and running:
     * [PoE All Ears Wiki Tracker](https://github.com/halfacandan/PoEUserScripts/raw/main/PoE_All_Ears_Wiki_Tracker.user.js)
     * [PoE No Stone Unturned Wiki Tracker](https://github.com/halfacandan/PoEUserScripts/raw/main/PoE_No_Stone_Unturned_Wiki_Tracker.user.js)
 3. Visit the PoE Wiki:
-    * [PoE Wiki "All Ears" page](https://pathofexile.fandom.com/wiki/All_Ears)
-    * [PoE Wiki "No Stone Unturned" page](https://pathofexile.fandom.com/wiki/No_Stone_Unturned)
+    * [PoE Wiki "All Ears" page](https://www.poewiki.net/wiki/All_Ears)
+    * [PoE Wiki "No Stone Unturned" page](https://www.poewiki.net/wiki/No_Stone_Unturned)
 
 ## Credits
 
