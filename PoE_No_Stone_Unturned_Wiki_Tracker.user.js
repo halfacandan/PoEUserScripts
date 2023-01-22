@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         PoE No Stone Unturned Wiki Tracker
 // @namespace    https://github.com/halfacandan/PoEUserScripts
-// @version      1.3
+// @version      1.4
 // @description  Track which objectives for the "No Stone Unturned" achievement have been completed on the PoE Wiki
 // @author       halfacandan
 // @match        https://pathofexile.gamepedia.com/No_Stone_Unturned*
@@ -84,9 +84,10 @@
         await GM.setValue('poe_lores', completedLores.join(","));
     }
 
-		var colourBlindMode = await GM.getValue('colourBlindMode', true);
+    var isPoeWiki = window.location.href.indexOf("poewiki.net") > 0;
+	var colourBlindMode = await GM.getValue('colourBlindMode', true);
     var completedLores = await getLores();
-    var lores = $("table.wikitable:not(table.wikitable:eq(0),table.responsive-table) tbody tr td:nth-child(1)");
+    var lores = $("table.sortable tbody tr td:nth-child(1)");
 
   	var jQueryUiStylesheetUri = "https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css";
 
@@ -96,8 +97,8 @@
             .loreId{cursor:pointer; color:red; }
             .completed{ color:green !important; font-weight:bold;}
             .completed.colourBlindMode:before{ content: '✅'; }
-            #loreCounter{ position:fixed; left:66px; top:0; height:120px; width:190px; padding:10px; background-color:#fff; z-index:9999; text-align: center; }
-            #colourBlindModeLabel{ font-size: 70%; }
+            #loreCounter{ position:fixed; left:` + (isPoeWiki ? 0 : 66) + `px; top:0; height:` + (isPoeWiki ? 100 : 120) + `px; width:190px; padding:10px; background-color:#fff; z-index:9999; text-align: center; font-size: 14px; }
+            #colourBlindModeLabel{ font-size: 70%; margin-left: 3px; position: relative; top: -2px; }
             #resetButton { font-size: 70%; margin-top: 13px; }
         </style>`).appendTo("head");
 

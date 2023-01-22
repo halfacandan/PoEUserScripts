@@ -87,6 +87,7 @@
         await GM.setValue('poe_achievements', completedAchievements.filter(onlyUnique).join(","));
     }
 
+    var isPoeWiki = window.location.href.indexOf("poewiki.net") > 0;
   	var colourBlindMode = await GM.getValue('colourBlindMode', true);
     let completedAchievements = await getAchievements();
     var achievements = $("table.wikitable:not(table.responsive-table) tr:not(:nth-child(1)) td:nth-child(1)");
@@ -109,9 +110,9 @@
             .brokenOrder:after{ content: '*'; }
             .doNot:after{ content: '▶'; }
             .brokenOrder.doNot:after{ content: '*▶'; }
-            #achievementCounter{ position:fixed; left:66px; top:0; height:220px; width:220px; padding:10px; background-color:#fff; z-index:9999; text-align: center; }
+            #achievementCounter{ position:fixed; left:` + (isPoeWiki ? 0 : 66) + `px; top:0; height:` + (isPoeWiki ? 180 : 200) + `px; width:220px; padding:10px; background-color:#fff; z-index:9999; text-align: center; }
             .guideInfo{ font-size: 80%; text-aligh: left;}
-            #colourBlindModeLabel{ font-size: 70%; }
+            #colourBlindModeLabel{ font-size: 70%; margin-left: 3px; position: relative; top: -2px; }
             #resetButton { font-size: 70%; margin-top: 13px; }
           </style>`).appendTo("head");
 
