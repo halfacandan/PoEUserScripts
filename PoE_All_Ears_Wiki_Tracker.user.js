@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         PoE All Ears Wiki Tracker
 // @namespace    https://github.com/halfacandan/PoEUserScripts
-// @version      1.3
+// @version      1.4
 // @description  Track which objectives for the "All Ears" achievement have been completed on the PoE Wiki
 // @author       halfacandan
 // @match        https://pathofexile.gamepedia.com/All_Ears*
