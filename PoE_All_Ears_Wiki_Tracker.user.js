@@ -1,14 +1,13 @@
 // ==UserScript==
 // @name         PoE All Ears Wiki Tracker
 // @namespace    https://github.com/halfacandan/PoEUserScripts
-// @version      1.4
+// @version      1.5
 // @description  Track which objectives for the "All Ears" achievement have been completed on the PoE Wiki
 // @author       halfacandan
 // @match        https://pathofexile.gamepedia.com/All_Ears*
 // @match        https://pathofexile.fandom.com/wiki/All_Ears*
 // @match        https://www.poewiki.net/wiki/All_Ears*
 // @require      https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js
-// @require      https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js
 // @grant        GM.setValue
 // @grant        GM.getValue
 // ==/UserScript==
@@ -93,8 +92,6 @@
     var achievements = $("table.wikitable:not(table.responsive-table) tr:not(:nth-child(1)) td:nth-child(1)");
     var achievementIds = [];
 
-  	var jQueryUiStylesheetUri = "https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css";
-
     // Filter out rowspan issues
     achievements = achievements.filter(function() {
         return $(this).text() * 1 > 0;
@@ -103,6 +100,7 @@
     var achievementDetail = $("table.wikitable tr:not(:nth-child(1))");
 
     $(document).ready(function(){
+
         $(`<style type='text/css'>
             .achievementId{ cursor:pointer; color:red; }
             .completed{ color:green !important; font-weight:bold; }
@@ -116,7 +114,6 @@
             #resetButton { font-size: 70%; margin-top: 13px; }
           </style>`).appendTo("head");
 
-      	$(`<link rel="stylesheet" href="${jQueryUiStylesheetUri}">`).appendTo("head");
 
         $(`<div id="achievementCounter">
                 <p></p>
@@ -199,33 +196,9 @@
         });
 
       	$(document).on("click","#resetButton", async function (){
-            $("<div>Would you like to reset your progress back to zero?</div>").dialog({
-              modal: true,
-              title: 'Reset Your Progress',
-              zIndex: 10000,
-              autoOpen: true,
-              width: 'auto',
-              resizable: false,
-              buttons: [
-                {
-                  text: "Yes",
-                  click: async function() {
-                    await updateAchievementCount("reset", null);
-                    $(this).dialog("close");
-                  }
-                },
-                {
-                  text: "Cancel",
-                  click: async function() {
-                    $(this).dialog("close");
-                  }
-                }
-              ],
-              close: async function(event, ui) {
-                $(this).remove();
-                console.log("close");
-              }
-            });
+            if (confirm("Would you like to reset your progress back to zero?")) {
+                await updateAchievementCount("reset", null);
+            }
         });
 
         $("#colourBlindMode,#colourBlindModeLabel").click(async function(){
